@@ -1,0 +1,49 @@
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/second-highest-salary
+题目如下：
+编写一个 SQL 查询，获取 Employee 表中第二高的薪水（Salary） 。
++----+--------+
+| Id | Salary |
++----+--------+
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
++----+--------+
+例如上述 Employee 表，SQL查询应该返回 200 作为第二高的薪水。如果不存在第二高的薪水，那么查询应返回 null。
++---------------------+
+| SecondHighestSalary |
++---------------------+
+| 200                 |
++---------------------+
+
+我的答案1：
+SELECT MAX(Salary) AS SecondHighestSalary FROM Employee 
+    WHERE Salary NOT IN
+        (SELECT MAX(Salary) FROM Employee);
+        
+我的答案2：
+SELECT 
+    (SELECT DISTINCT Salary  FROM Employee
+        ORDER BY Salary DESC
+        LIMIT 1 OFFSET 1)
+AS SecondHighestSalary
+
+我的答案3:
+SELECT 
+    IFNULL
+    ((SELECT DISTINCT Salary  FROM Employee
+        ORDER BY Salary DESC
+        LIMIT 1 OFFSET 1), NULL)
+AS SecondHighestSalary
+
+考点；
+排序、去重、处理查询为空情况
+
+解析：
+答案1  使用Max函数，取出的不包含最大值的数字中的最大值，即为第二大值，
+       这种方法仅适用于取第一大/小、第二大/小的情况，当题目变化为第n
+       大/小时不再适用，不具有普遍性。
+答案2  首先ORDER BY DESC进行降序排序，再使用LIMIT方法获得第二大的值，
+       null情况通过建立临时表的方法来解决。
+答案3  首先ORDER BY DESC进行降序排序，再使用LIMIT方法获得第二大的值，
+       null情况通过IFNULL函数解决，为空设为null。
