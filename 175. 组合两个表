@@ -28,6 +28,11 @@ FirstName, LastName, City, State
 select  FirstName, LastName, City, State from Person as P 
 left join Address as A on P.PersonId = A.PersonId
 
+考点；左右连接
+join on 使用用来连接表,
+如果想保留左表的所有内容就用lef join, 右表的内容用right join, 
+where 单独使用类似于inner join。
+
 解析：
 把两个表的数据通过PersonId连接在一起，组合成一张新表，连接条件即为二表PersonId相同；
 注意审题：无论 person 是否有地址信息，都需要基于上述两表提供 person 的信息：FirstName, LastName, City, State；
