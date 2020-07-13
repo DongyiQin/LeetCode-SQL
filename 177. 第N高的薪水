@@ -1,0 +1,40 @@
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/nth-highest-salary
+
+题目如下：
+编写一个 SQL 查询，获取 Employee 表中第 n 高的薪水（Salary）。
++----+--------+
+| Id | Salary |
++----+--------+
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
++----+--------+
+例如上述 Employee 表，n = 2 时，应返回第二高的薪水 200。如果不存在第 n 高的薪水，那么查询应返回 null。
++------------------------+
+| getNthHighestSalary(2) |
++------------------------+
+| 200                    |
++------------------------+
+
+我的答案：
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+SET N = N-1;  # 从0开始索引，一定要设置n = n-1
+  RETURN (
+    SELECT(
+        IFNULL(
+            (SELECT DISTINCT Salary FROM Employee
+              ORDER BY Salary DESC
+              LIMIT 1 OFFSET N),NULL)
+    ) 
+  );
+END
+
+考点；
+排序、去重、处理查询为空情况
+
+解析：
+首先要特别注意数据库从0开始索引，第N大的排序后在索引的第N-1位置处，首先设置SET N = N-1;
+然后就是排序，选择第N处的数据出来；
+为空的情况使用IFNULL函数解决。
