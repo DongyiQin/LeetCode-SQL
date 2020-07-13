@@ -1,0 +1,34 @@
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/combine-two-tables
+题目如下：
+表1: Person
++-------------+---------+
+| 列名         | 类型     |
++-------------+---------+
+| PersonId    | int     |
+| FirstName   | varchar |
+| LastName    | varchar |
++-------------+---------+
+PersonId 是上表主键
+
+表2: Address
++-------------+---------+
+| 列名         | 类型    |
++-------------+---------+
+| AddressId   | int     |
+| PersonId    | int     |
+| City        | varchar |
+| State       | varchar |
++-------------+---------+
+AddressId 是上表主键
+编写一个 SQL 查询，满足条件：无论 person 是否有地址信息，都需要基于上述两表提供 person 的以下信息：
+FirstName, LastName, City, State
+
+我的答案：
+select  FirstName, LastName, City, State from Person as P 
+left join Address as A on P.PersonId = A.PersonId
+
+解析：
+把两个表的数据通过PersonId连接在一起，组合成一张新表，连接条件即为二表PersonId相同；
+注意审题：无论 person 是否有地址信息，都需要基于上述两表提供 person 的信息：FirstName, LastName, City, State；
+因此选择左连接才能保证即使Person信息有空也全部显示！
