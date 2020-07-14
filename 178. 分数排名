@@ -1,0 +1,59 @@
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/rank-scores
+
+题目如下：
+编写一个 SQL 查询来实现分数排名。
+如果两个分数相同，则两个分数排名（Rank）相同。请注意，平分后的下一个名次应该是下一个连续的整数值。换句话说，名次之间不应该有“间隔”。
++----+-------+
+| Id | Score |
++----+-------+
+| 1  | 3.50  |
+| 2  | 3.65  |
+| 3  | 4.00  |
+| 4  | 3.85  |
+| 5  | 4.00  |
+| 6  | 3.65  |
++----+-------+
+例如，根据上述给定的 Scores 表，你的查询应该返回（按分数从高到低排列）：
++-------+------+
+| Score | Rank |
++-------+------+
+| 4.00  | 1    |
+| 4.00  | 1    |
+| 3.85  | 2    |
+| 3.65  | 3    |
+| 3.65  | 3    |
+| 3.50  | 4    |
++-------+------+
+重要提示：对于 MySQL 解决方案，如果要转义用作列名的保留字，可以在关键字之前和之后使用撇号。例如 `Rank`
+
+答案1：
+SELECT S1.Score 'Score',COUNT(DISTINCT S2.Score) 'Rank'
+FROM Scores AS S1,Scores AS S2
+WHERE S1.Score<=S2.Score
+GROUP BY S1.Id
+ORDER BY S1.Score DESC
+答案2：
+SELECT Score 'Score', 
+    DENSE_RANK() OVER(ORDER BY Score DESC) 'Rank'
+FROM Scores
+
+考点；
+排序，相同分数的序号处理
+
+解析：
+答案1   拆分为两个部分思考：
+        1是分数降序排序：
+            SELECT S1.Score
+            FROM Scores AS S1
+            ORDER BY S1.Score DESC
+        2是获得Rank，思考一下可以想到，Rank是比当前这个人分数更高的人的数量，且要去重复（因为这里相同分数的人 Rank 相同）：
+            SELECT COUNT(DISTINCT S2.Score)
+            FROM Scores S2
+            WHERE S1.Score <= S2.Score
+        最后要将所有人的分数和Rank都显示，就需要在排序之前执行GROUP BY S1.Id操作（如果group by score，就只会显示相同分数的一个人，其他人显示不出来）
+答案2   这是SQL的窗口函数，关于排序有三种窗口函数rank, dense_rank, row_number,注意区分这三种排序函数：
+        rank：相同分数rank相同，之后不是紧邻的rank，而是按照数目递增的rank，比如 1 2 2 2 5 6 7 7 9
+        dense_rank：相同分数rank相同，之后是紧邻的rank，比如 1 2 2 2 3 4 5 5 6
+        row_number：相同分数rank不同，比如 1 2 3 4 5 6 7 8 9（2、3、4的分数相同，7、8的分数相同）
