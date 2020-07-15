@@ -1,0 +1,35 @@
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/consecutive-numbers
+
+题目如下：
+编写一个 SQL 查询，查找所有至少连续出现三次的数字。
++----+-----+
+| Id | Num |
++----+-----+
+| 1  |  1  |
+| 2  |  1  |
+| 3  |  1  |
+| 4  |  2  |
+| 5  |  1  |
+| 6  |  2  |
+| 7  |  2  |
++----+-----+
+例如，给定上面的 Logs 表， 1 是唯一连续出现至少三次的数字。
++-----------------+
+| ConsecutiveNums |
++-----------------+
+| 1               |
++-----------------+
+
+我的答案：
+SELECT DISTINCT S1.Num 'ConsecutiveNums'
+FROM Logs S1, Logs S2, Logs S3
+WHERE S1.Num = S2.Num AND S2.Num = S3.Num AND 
+      S1.Id = S2.Id - 1 AND S2.Id = S3.Id - 1
+
+考点；
+数据库查询的逻辑思维。
+
+解析：
+要求连续出现至少三次，说明要查找的三个数字，Num相等，Id连续。
