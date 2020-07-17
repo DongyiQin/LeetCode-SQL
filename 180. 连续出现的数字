@@ -33,3 +33,4 @@ WHERE S1.Num = S2.Num AND S2.Num = S3.Num AND
 
 解析：
 要求连续出现至少三次，说明要查找的三个数字，Num相等，Id连续。
+
