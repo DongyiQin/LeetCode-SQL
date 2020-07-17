@@ -29,3 +29,4 @@ E1.Salary>E2.Salary AND E1.ManagerId = E2.Id
 
 解析：
 表E1对应员工，表E2对应经理，要求E1的ManagerId与表2的Id相同，E1的Salary更高。
+
