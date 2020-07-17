@@ -47,3 +47,4 @@ AS SecondHighestSalary
        null情况通过建立临时表的方法来解决。
 答案3  首先ORDER BY DESC进行降序排序，再使用LIMIT方法获得第二大的值，
        null情况通过IFNULL函数解决，为空设为null。
+
