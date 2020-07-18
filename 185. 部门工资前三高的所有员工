@@ -1,0 +1,84 @@
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/department-top-three-salaries
+
+题目如下：
+Employee 表包含所有员工信息，每个员工有其对应的工号 Id，姓名 Name，工资 Salary 和部门编号 DepartmentId 。
++----+-------+--------+--------------+
+| Id | Name  | Salary | DepartmentId |
++----+-------+--------+--------------+
+| 1  | Joe   | 85000  | 1            |
+| 2  | Henry | 80000  | 2            |
+| 3  | Sam   | 60000  | 2            |
+| 4  | Max   | 90000  | 1            |
+| 5  | Janet | 69000  | 1            |
+| 6  | Randy | 85000  | 1            |
+| 7  | Will  | 70000  | 1            |
++----+-------+--------+--------------+
+Department 表包含公司所有部门的信息。
++----+----------+
+| Id | Name     |
++----+----------+
+| 1  | IT       |
+| 2  | Sales    |
++----+----------+
+编写一个 SQL 查询，找出每个部门获得前三高工资的所有员工。例如，根据上述给定的表，查询结果应返回：
++------------+----------+--------+
+| Department | Employee | Salary |
++------------+----------+--------+
+| IT         | Max      | 90000  |
+| IT         | Randy    | 85000  |
+| IT         | Joe      | 85000  |
+| IT         | Will     | 70000  |
+| Sales      | Henry    | 80000  |
+| Sales      | Sam      | 60000  |
++------------+----------+--------+
+解释：
+IT 部门中，Max 获得了最高的工资，Randy 和 Joe 都拿到了第二高的工资，Will 的工资排第三。销售部门（Sales）只有两名员工，Henry 的工资最高，Sam 的工资排第二。
+
+
+答案1：
+SELECT D.Name 'Department', E1.Name 'Employee', E1.Salary 'Salary'
+FROM Employee E1 
+JOIN Department D ON E1.DepartmentId = D.Id
+WHERE (
+      SELECT COUNT(DISTINCT E2.Salary)
+      FROM Employee E2
+      WHERE E2.Salary > E1.Salary AND 
+      E1.DepartmentId = E2.DepartmentId
+      ) <=2
+ORDER BY E1.DepartmentId, E1.Salary;
+解析此答案: 
+前三高意味着有不超过3个工资值比这个值高。
+1、首先计算比当前工资更高的人数：两个Employee表连接，通过COUNT函数计算，这部分代码如下。需要注意的是，重复的工资也算在内，所有要加上DISTINCT。
+      SELECT COUNT(DISTINCT E2.Salary)
+      FROM Employee E2
+      WHERE E2.Salary > E1.Salary AND 
+      E1.DepartmentId = E2.DepartmentId
+2、然后就是将1中得到的数量进行<=2的限制。
+3、接下来需要对Employee表和Department表进行合并：
+      SELECT D.Name 'Department', E1.Name 'Employee', E1.Salary 'Salary'
+      FROM Employee E1 
+      JOIN Department D ON E1.DepartmentId = D.Id
+4、最后按照部门先排序，工资后排序的顺序排列：
+      ORDER BY E1.DepartmentId, E1.Salary;
+
+
+答案2：
+SELECT D.Name 'Department', X.Employee, X.Salary
+FROM(
+    SELECT E.Name 'Employee', E.Salary 'Salary', E.DepartmentId 'DepartmentId',
+    Dense_Rank() OVER (PARTITION BY E.DepartmentId ORDER BY E.Salary DESC) 'Rank'
+    FROM Employee E 
+) X
+LEFT JOIN Department D ON X.DepartmentId = D.Id
+WHERE X.Rank<=3 AND D.Name IS NOT NULL
+解析此答案：
+前三高意味着Rank<=3。
+拿到这个题第一下想到的就是前面的分数排序问题，使用DENSE_RANK()函数可以获得排名,这里需要注意要分部门排序，因此排序函数内需要加上PARTITION BY E.DepartmentId。
+
+
+考点；
+如何思考前三高？ 更高的工资值只有0-2个。
+如何计算更高的工资？ 两表连接，表一工资低于表二，表二查询出来的数目<=2。
+
+如何思考前三高？得到排序Rank，Rank<=3。
