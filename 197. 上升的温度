@@ -1,0 +1,33 @@
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/rising-temperature
+
+题目如下：
+给定一个 Weather 表，编写一个 SQL 查询，来查找与之前（昨天的）日期相比温度更高的所有日期的 Id。
++---------+------------------+------------------+
+| Id(INT) | RecordDate(DATE) | Temperature(INT) |
++---------+------------------+------------------+
+|       1 |       2015-01-01 |               10 |
+|       2 |       2015-01-02 |               25 |
+|       3 |       2015-01-03 |               20 |
+|       4 |       2015-01-04 |               30 |
++---------+------------------+------------------+
+例如，根据上述给定的 Weather 表格，返回如下 Id:
++----+
+| Id |
++----+
+|  2 |
+|  4 |
++----+
+
+答案：
+SELECT W1.Id FROM Weather W1
+JOIN Weather W2 ON 
+W1.Temperature > W2.Temperature AND
+DATEDIFF(W1.RecordDate,W2.RecordDate) = 1
+ 
+解析：
+两表连接，首先要满足W1的温度更高，然后思考前一天这个条件如何表示，
+日期类型的数据不能直接-1，这里需要用到函数DATEDIFF(DATE1,DATE2) = DATE1-DATE2的天数
+
+考点：
+两表联查，日期相差一天如何处理？
