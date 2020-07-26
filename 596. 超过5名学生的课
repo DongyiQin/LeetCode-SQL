@@ -1,0 +1,41 @@
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/classes-more-than-5-students
+
+题目如下：
+有一个courses 表 ，有: student (学生) 和 class (课程)。
+请列出所有超过或等于5名学生的课。
+例如,表:
++---------+------------+
+| student | class      |
++---------+------------+
+| A       | Math       |
+| B       | English    |
+| C       | Math       |
+| D       | Biology    |
+| E       | Math       |
+| F       | Computer   |
+| G       | Math       |
+| H       | Math       |
+| I       | Math       |
++---------+------------+
+应该输出:
++---------+
+| class   |
++---------+
+| Math    |
++---------+
+Note:
+学生在每个课中不应被重复计算。
+
+我的答案：
+SELECT class
+FROM Courses
+GROUP BY class
+HAVING COUNT(DISTINCT Student) >=5;
+
+考点；
+GROUP BY
+HAIVNG COUNT
+
+解析：
+加上DISTINCT Student就是为了满足条件：学生在每个课中不应被重复计算。
