@@ -1,0 +1,17 @@
+对所有员工的当前(to_date='9999-01-01')薪水按照salary进行按照1-N的排名，相同salary并列且按照emp_no升序排列
+CREATE TABLE `salaries` (
+`emp_no` int(11) NOT NULL,
+`salary` int(11) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL,
+PRIMARY KEY (`emp_no`,`from_date`));
+
+答案：
+SELECT emp_no,salary,DENSE_RANK() OVER(ORDER BY salary DESC) AS rank
+FROM salaries
+WHERE to_date='9999-01-01'
+ORDER BY rank ASC,emp_no ASC
+
+rank：相同分数rank相同，之后不是紧邻的rank，而是按照数目递增的rank，比如 1 2 2 2 5 6 7 7 9
+dense_rank：相同分数rank相同，之后是紧邻的rank，比如 1 2 2 2 3 4 5 5 6
+row_number：相同分数rank不同，比如 1 2 3 4 5 6 7 8 9（2、3、4的分数相同，7、8的分数相同）
